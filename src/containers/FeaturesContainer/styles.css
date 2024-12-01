@@ -1,0 +1,9 @@
+.features-container {
+  top: 4rem;
+  position: relative;
+  height: calc(100vh);
+  font-family: "Space Grotesk", sans-serif;
+  background-color: #F5FBFF;
+  opacity: 70%;
+}
+

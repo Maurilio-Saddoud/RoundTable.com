@@ -1,0 +1,87 @@
+.hero-container {
+  top: 4rem;
+  position: relative;
+  height: calc(100vh - 4rem);
+  font-family: "Space Grotesk", sans-serif;
+  overflow-x: hidden;
+}
+
+.hero-container-background {
+  background-color: #f5fbff;
+  opacity: 70%;
+  height: 100vh;
+  width: 100%;
+  position: absolute;
+  overflow-x: hidden;
+}
+
+.hero-copy {
+  height: calc(100vh - 4rem);
+  position: relative;
+  margin-left: 5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  top: -1rem;
+}
+
+.hero-logo {
+  height: calc(100vh - 4rem);
+  display: flex;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  top: -1rem;
+}
+
+.hero-logo-img {
+  width: 60%;
+}
+
+.hero-copy > h1 {
+  margin: 0;
+  color: #16abff;
+  font-size: 5rem;
+  font-weight: bold;
+  line-height: 4.7rem;
+}
+.hero-copy > p {
+  color: #16abff;
+  font-size: 1.7rem;
+}
+
+.hero-button-container {
+  display: flex;
+  width: 13rem;
+  justify-content: space-between;
+}
+
+.falling-elements-container {
+  position: absolute;
+  width: 100vw;
+  height: calc(100vh + 10rem);
+  overflow-x: hidden;
+  top: -3rem;
+  z-index: -2;
+}
+
+.falling-object {
+  position: absolute;
+  animation-name: fall;
+  animation-timing-function: linear;
+  animation-iteration-count: 1;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(0) rotate(var(--rotation));
+    opacity: 1; /* Fully visible at the start */
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(var(--rotation));
+    opacity: 0; /* Fully transparent at the end */
+  }
+}
