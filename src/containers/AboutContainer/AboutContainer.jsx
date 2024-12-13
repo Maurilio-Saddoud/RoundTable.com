@@ -202,13 +202,21 @@ const AboutContainer = () => {
               style={{ opacity: styles.buttonContainerOpacity }}
               className="absolute bottom-0 mb-14 w-full h-4 flex justify-evenly items-center"
             >
-              <FaRegPauseCircle color="#333333" size={"1.75rem"} />
-              <div className="interrupt-button bg-[#333333] w-20 h-20 rounded-full flex flex-col justify-center items-center">
+              <FaRegPauseCircle
+                color="#333333"
+                size={"1.75rem"}
+                className="hover:opacity-50 transition-opacity cursor-pointer"
+              />
+              <div className="interrupt-button bg-[#333333] w-20 h-20 rounded-full flex flex-col justify-center items-center hover:opacity-50 transition-opacity cursor-pointer">
                 <FaMicrophone color="#16ABFF" size={"1.5rem"} />
                 <p className="font-bold text-[0.6rem] pt-1">Interrupt</p>
                 <p className="text-[0.35rem] text-center">hold to record</p>
               </div>
-              <FaRegStopCircle color="#333333" size={"1.75rem"} />
+              <FaRegStopCircle
+                color="#333333"
+                size={"1.75rem"}
+                className="hover:opacity-50 transition-opacity cursor-pointer"
+              />
             </motion.div>
           </motion.div>
         </div>
