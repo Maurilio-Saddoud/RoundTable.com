@@ -58,22 +58,22 @@ const AboutContainer = () => {
     textScrollY: useTransform(scrollYProgress, [0.65, 0.85], [0, -100]), //10
     titleTextSize: useTransform(
       scrollYProgress,
-      [0.3, 0.55],
+      [0.525, 0.55],
       ["1.25rem", "0.875rem"]
     ), //10
     titleTextlineHeight: useTransform(
       scrollYProgress,
-      [0.3, 0.55],
+      [0.525, 0.55],
       ["1.75rem", "1.25rem"]
     ), //10
     contentTextSize: useTransform(
       scrollYProgress,
-      [0.3, 0.55],
+      [0.525, 0.55],
       ["1.875rem", "1.125rem"]
     ), //10
     contentTextLineHeight: useTransform(
       scrollYProgress,
-      [0.3, 0.55],
+      [0.525, 0.55],
       ["2.25rem", " 1.75rem"]
     ), //10
   };
