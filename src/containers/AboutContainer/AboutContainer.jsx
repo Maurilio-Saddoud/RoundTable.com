@@ -22,8 +22,8 @@ const AboutContainer = () => {
 
   // Update follow-up visibility based on scroll progress
   const handleScrollProgress = useCallback(() => {
-    setIsFollowUpVisible(scrollYProgress.get() > 0.2);
-    setisFinalFollowUpVisible(scrollYProgress.get() > 0.91);
+    setIsFollowUpVisible(scrollYProgress.get() > 0.15);
+    setisFinalFollowUpVisible(scrollYProgress.get() > 0.86);
   }, [scrollYProgress]);
 
   useEffect(() => {
@@ -37,43 +37,43 @@ const AboutContainer = () => {
     typeof window !== "undefined" ? window.innerHeight : 1080;
 
   const styles = {
-    width: useTransform(scrollYProgress, [0.4, 0.55], [screenWidth, 250]), // 15
+    width: useTransform(scrollYProgress, [0.3, 0.55], [screenWidth, 250]), // 15
     height: useTransform(scrollYProgress, [0.5, 0.55], [screenHeight, 500]), // 5
     borderRadius: useTransform(scrollYProgress, [0.5, 0.5001], [0, 30]), // 0.001
-    translateX: useTransform(scrollYProgress, [0.5, 0.55], ["25%", "50%"]), //5
-    translateY: useTransform(scrollYProgress, [0.4, 0.5], ["0rem", "2rem"]), //10
+    translateX: useTransform(scrollYProgress, [0.4, 0.55], ["25%", "50%"]), //5
+    translateY: useTransform(scrollYProgress, [0.3, 0.5], ["0rem", "2rem"]), //10
     backgroundColor: useTransform(
       scrollYProgress,
       [0, 0.05],
       ["#F7FCFF", "#F1F1F1"]
     ),
-    paddingTop: useTransform(scrollYProgress, [0.5, 0.55], ["7rem", "3rem"]), // 5
+    paddingTop: useTransform(scrollYProgress, [0.4, 0.55], ["7rem", "3rem"]), // 5
     bezelOpacity: useTransform(scrollYProgress, [0.5, 0.55], [0, 1]), // 10
     borderColor: useTransform(
       scrollYProgress,
-      [0.5, 0.55], // 5
+      [0.47, 0.55], // 5
       ["#F7FCFF", "#000"]
     ),
     buttonContainerOpacity: useTransform(scrollYProgress, [0.5, 0.55], [0, 1]), //5
-    textScrollY: useTransform(scrollYProgress, [0.7, 0.9], [0, -100]), //10
+    textScrollY: useTransform(scrollYProgress, [0.65, 0.85], [0, -100]), //10
     titleTextSize: useTransform(
       scrollYProgress,
-      [0.4, 0.55],
+      [0.3, 0.55],
       ["1.25rem", "0.875rem"]
     ), //10
     titleTextlineHeight: useTransform(
       scrollYProgress,
-      [0.4, 0.55],
+      [0.3, 0.55],
       ["1.75rem", "1.25rem"]
     ), //10
     contentTextSize: useTransform(
       scrollYProgress,
-      [0.4, 0.55],
+      [0.3, 0.55],
       ["1.875rem", "1.125rem"]
     ), //10
     contentTextLineHeight: useTransform(
       scrollYProgress,
-      [0.4, 0.55],
+      [0.3, 0.55],
       ["2.25rem", " 1.75rem"]
     ), //10
   };
@@ -87,7 +87,7 @@ const AboutContainer = () => {
   return (
     <motion.div className="w-full">
       {/* Scrolling Section */}
-      <section ref={sectionRef} className="relative h-[200vh]">
+      <section ref={sectionRef} className="relative h-[250vh]">
         {/* Sticky Content */}
         <div className="top-0 sticky w-full h-screen bg-gradient-to-b from-[#16ABFF] to-[#0D6799] flex items-center">
           <div className="w-1/2 h-full pl-20 font-space text-white flex flex-col justify-center">
