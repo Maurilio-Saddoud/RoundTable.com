@@ -2,6 +2,7 @@ import React from "react";
 import HeroContainer from "../../containers/HeroContainer";
 import NavBar from "../../components/NavBar";
 import FeaturesContainer from "../../containers/FeaturesContainer";
+import AboutContainer from "../../containers/AboutContainer";
 // import FeaturesContainer from '../../containers/FeaturesContainer'
 
 const RoundTablePage = () => {
@@ -9,6 +10,7 @@ const RoundTablePage = () => {
     <>
       <NavBar />
       <HeroContainer />
+      <AboutContainer />
       <FeaturesContainer />
       {/* Main Content */}
       <div>

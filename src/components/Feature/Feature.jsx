@@ -30,7 +30,7 @@ const Feature = ({ title, copy, standOut, src, width, textFirst = true }) => {
 
 const FeatureText = ({ title, copy, standOut }) => {
   return (
-    <div className="px-4 pb-2 mx-8 my-8 backdrop-blur-lg bg-heroBackground/40 max-w-xl">
+    <div className="px-4 pb-2 mx-8 my-8 backdrop-blur-lg bg-heroBackground/40 max-w-xl rounded-xl overflow-clip">
       <h1 className="text-2xl py-2 font-space font-bold">{title}</h1>
       <p className="text-lg font-space py-1">{copy}</p>
       <p className="text-lg font-space text-primary">{standOut}</p>
