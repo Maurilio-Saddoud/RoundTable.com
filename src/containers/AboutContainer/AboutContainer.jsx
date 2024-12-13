@@ -23,7 +23,7 @@ const AboutContainer = () => {
   // Update follow-up visibility based on scroll progress
   const handleScrollProgress = useCallback(() => {
     setIsFollowUpVisible(scrollYProgress.get() > 0.2);
-    setisFinalFollowUpVisible(scrollYProgress.get() > 0.86);
+    setisFinalFollowUpVisible(scrollYProgress.get() > 0.91);
   }, [scrollYProgress]);
 
   useEffect(() => {
@@ -48,14 +48,14 @@ const AboutContainer = () => {
       ["#F7FCFF", "#F1F1F1"]
     ),
     paddingTop: useTransform(scrollYProgress, [0.5, 0.55], ["7rem", "3rem"]), // 5
-    bezelOpacity: useTransform(scrollYProgress, [0.6, 0.65], [0, 1]), // 10
+    bezelOpacity: useTransform(scrollYProgress, [0.5, 0.55], [0, 1]), // 10
     borderColor: useTransform(
       scrollYProgress,
       [0.5, 0.55], // 5
       ["#F7FCFF", "#000"]
     ),
-    buttonContainerOpacity: useTransform(scrollYProgress, [0.7, 0.75], [0, 1]), //5
-    textScrollY: useTransform(scrollYProgress, [0.8, 0.85], [0, -100]), //10
+    buttonContainerOpacity: useTransform(scrollYProgress, [0.5, 0.55], [0, 1]), //5
+    textScrollY: useTransform(scrollYProgress, [0.7, 0.9], [0, -100]), //10
     titleTextSize: useTransform(
       scrollYProgress,
       [0.4, 0.55],
@@ -87,7 +87,7 @@ const AboutContainer = () => {
   return (
     <motion.div className="w-full">
       {/* Scrolling Section */}
-      <section ref={sectionRef} className="relative h-[500vh]">
+      <section ref={sectionRef} className="relative h-[200vh]">
         {/* Sticky Content */}
         <div className="top-0 sticky w-full h-screen bg-gradient-to-b from-[#16ABFF] to-[#0D6799] flex items-center">
           <div className="w-1/2 h-full pl-20 font-space text-white flex flex-col justify-center">
@@ -121,7 +121,7 @@ const AboutContainer = () => {
               borderColor: styles.borderColor,
               paddingTop: styles.paddingTop,
             }}
-            className="right-1/4 translate-x-1/2 absolute text-white overflow-hidden flex flex-col justify-start items-center p-4 font-space border-4 border-gray-800"
+            className="right-1/4 translate-x-1/2 absolute text-white overflow-hidden flex flex-col justify-center items-center p-4 font-space border-4 border-gray-800"
           >
             <motion.div
               id="textContainer"
@@ -202,13 +202,21 @@ const AboutContainer = () => {
               style={{ opacity: styles.buttonContainerOpacity }}
               className="absolute bottom-0 mb-14 w-full h-4 flex justify-evenly items-center"
             >
-              <FaRegPauseCircle color="#333333" size={"1.75rem"} />
-              <div className="interrupt-button bg-[#333333] w-20 h-20 rounded-full flex flex-col justify-center items-center">
+              <FaRegPauseCircle
+                color="#333333"
+                size={"1.75rem"}
+                className="hover:opacity-50 transition-opacity cursor-pointer"
+              />
+              <div className="interrupt-button bg-[#333333] w-20 h-20 rounded-full flex flex-col justify-center items-center hover:opacity-50 transition-opacity cursor-pointer">
                 <FaMicrophone color="#16ABFF" size={"1.5rem"} />
                 <p className="font-bold text-[0.6rem] pt-1">Interrupt</p>
                 <p className="text-[0.35rem] text-center">hold to record</p>
               </div>
-              <FaRegStopCircle color="#333333" size={"1.75rem"} />
+              <FaRegStopCircle
+                color="#333333"
+                size={"1.75rem"}
+                className="hover:opacity-50 transition-opacity cursor-pointer"
+              />
             </motion.div>
           </motion.div>
         </div>
