@@ -2,6 +2,8 @@ import { Grid2 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Button from "../../components/Button/Button";
 import { handleDownload } from "../../utils/handleDownload";
+import { RiScrollToBottomLine } from "react-icons/ri";
+import { motion } from "framer-motion";
 
 const HeroContainer = () => {
   const [fallingObjects, setFallingObjects] = useState([]);
@@ -45,6 +47,10 @@ const HeroContainer = () => {
     setFallingObjects((prev) => prev.filter((obj) => obj.id !== id));
   };
 
+  const scrollToNextSection = () => {
+    window.scrollBy({ top: window.innerHeight, behavior: "smooth" });
+  };
+
   return (
     <>
       <div className="relative h-screen w-screen bg-heroBackground/70 overflow-hidden">
@@ -58,12 +64,13 @@ const HeroContainer = () => {
                 Smartcasts
               </h1>
               <p className="font-space text-3xl text-primary py-4">
-                Turn reading materials into real-time, engaging, {" "}
-                <strong>interactive </strong>
-                podcasts—anytime, anywhere.
+                Turn reading materials into real-time, engaging,{" "}
+                <strong>interactive</strong> podcasts—anytime, anywhere.
               </p>
               <div className="flex w-72 h-12 justify-between mt-4">
-                <Button width={"8rem"} onClick={handleDownload}>Download</Button>
+                <Button width={"8rem"} onClick={handleDownload}>
+                  Download
+                </Button>
                 <Button
                   backgroundColor={"#ffffff"}
                   color={"#16ABFF"}
@@ -84,6 +91,35 @@ const HeroContainer = () => {
             </div>
           </Grid2>
         </Grid2>
+        <motion.div
+          className="test absolute bottom-8 flex justify-center w-full cursor-pointer"
+          onClick={scrollToNextSection}
+          initial={{ opacity: 0, y: 0 }}
+          animate={{
+            opacity: [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+            y: [0, 0, 24, 0, 24, 0, 24, 0, 24, 0, 24],
+          }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            times: [0, 0.2, 0.3, 0.35, 0.37, 0.4, 0.42, 0.45, 0.47, 0.5, 0.65],
+            ease: [
+              "easeOut",
+              "easeIn",
+              "easeOut",
+              "easeIn",
+              "easeOut",
+              "easeIn",
+              "easeOut",
+              "easeIn",
+              "easeOut",
+              "easeIn",
+              "easeOut",
+            ],
+          }}
+        >
+          <RiScrollToBottomLine color="#16ABFF" size={"2.5rem"} />
+        </motion.div>
       </div>
 
       <div className="absolute top-[-3rem] left-0 w-screen h-[calc(100vh+3rem)] overflow-hidden z-[-2]">
