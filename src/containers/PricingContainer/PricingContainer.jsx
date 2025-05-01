@@ -149,12 +149,12 @@ const PricingContainer = () => {
             <h4 className="text-xl font-semibold text-gray-800 !mt-0 !mb-0">Includes</h4>
             <ul className="space-y-3 list-disc pl-5 text-gray-600 !mt-0 !mb-0">
               <li className="leading-relaxed !mt-0 !mb-0">
-                File Upload: Turn your notes, textbooks, or documents into
+                <b>File Upload: </b>Turn your notes, textbooks, or documents into
                 engaging podcasts.
               </li>
-              <li className="leading-relaxed !mt-0 !mb-0">Interactive Podcasts</li>
-              <li className="leading-relaxed !mt-0 !mb-0">Podcast History</li>
-              <li className="leading-relaxed !mt-0 !mb-0">Three Podcasts Per Month on us!</li>
+              <li className="leading-relaxed !mt-0 !mb-0"><b>Interactive Podcasts</b></li>
+              <li className="leading-relaxed !mt-0 !mb-0"><b>Podcast History</b></li>
+              <li className="leading-relaxed !mt-0 !mb-0"><b>Three Podcasts Per Month</b> on us!</li>
             </ul>
           </div>
         </Card>
