@@ -37,45 +37,57 @@ const AboutContainer = () => {
     typeof window !== "undefined" ? window.innerHeight : 1080;
 
   const styles = {
-    width: useTransform(scrollYProgress, [0.3, 0.55], [screenWidth, 250]), // 15
-    height: useTransform(scrollYProgress, [0.5, 0.55], [screenHeight, 500]), // 5
-    borderRadius: useTransform(scrollYProgress, [0.5, 0.5001], [0, 30]), // 0.001
-    translateX: useTransform(scrollYProgress, [0.4, 0.55], ["25%", "50%"]), //5
-    translateY: useTransform(scrollYProgress, [0.3, 0.5], ["0rem", "2rem"]), //10
+    width: useTransform(scrollYProgress, [0.3, 0.55], [screenWidth, 250]),
+    height: useTransform(scrollYProgress, [0.5, 0.55], [screenHeight, 500]),
+    borderRadius: useTransform(scrollYProgress, [0.5, 0.5001], [0, 30]),
+    translateX: useTransform(scrollYProgress, [0.4, 0.55], ["25%", "50%"]),
+    translateY: useTransform(scrollYProgress, [0.3, 0.5], ["0rem", "2rem"]),
     backgroundColor: useTransform(
       scrollYProgress,
       [0, 0.05],
       ["#F7FCFF", "#F1F1F1"]
     ),
-    paddingTop: useTransform(scrollYProgress, [0.4, 0.55], ["7rem", "3rem"]), // 5
-    bezelOpacity: useTransform(scrollYProgress, [0.5, 0.55], [0, 1]), // 10
+    paddingTop: useTransform(scrollYProgress, [0.4, 0.55], ["7rem", "3rem"]),
+    bezelOpacity: useTransform(scrollYProgress, [0.5, 0.55], [0, 1]),
     borderColor: useTransform(
       scrollYProgress,
-      [0.47, 0.55], // 5
+      [0.47, 0.55],
       ["#F7FCFF", "#000"]
     ),
-    buttonContainerOpacity: useTransform(scrollYProgress, [0.5, 0.55], [0, 1]), //5
-    textScrollY: useTransform(scrollYProgress, [0.65, 0.85], [0, -100]), //10
+    buttonContainerOpacity: useTransform(scrollYProgress, [0.5, 0.55], [0, 1]),
+    textScrollY: useTransform(scrollYProgress, [0.65, 0.85], [0, -100]),
     titleTextSize: useTransform(
       scrollYProgress,
       [0.525, 0.55],
       ["1.25rem", "0.875rem"]
-    ), //10
+    ),
     titleTextlineHeight: useTransform(
       scrollYProgress,
       [0.525, 0.55],
       ["1.75rem", "1.25rem"]
-    ), //10
+    ),
     contentTextSize: useTransform(
       scrollYProgress,
       [0.525, 0.55],
       ["1.875rem", "1.125rem"]
-    ), //10
+    ),
     contentTextLineHeight: useTransform(
       scrollYProgress,
       [0.525, 0.55],
       ["2.25rem", " 1.75rem"]
-    ), //10
+    ),
+    aboutOpacity: useTransform(scrollYProgress, [0.4, 0.55], [0, 1]),
+    aboutTranslateX: useTransform(
+      scrollYProgress,
+      [0.4, 0.55],
+      ["16rem", "0rem"]
+    ),
+    aboutTranslateY: useTransform(
+      scrollYProgress,
+      [0.4, 0.55],
+      ["4rem", "0rem"]
+    ),
+    aboutRotate: useTransform(scrollYProgress, [0.35, 0.55], [15 , 0]),
   };
 
   // Animation variants
@@ -87,10 +99,19 @@ const AboutContainer = () => {
   return (
     <motion.div className="w-full">
       {/* Scrolling Section */}
-      <section ref={sectionRef} className="relative h-[250vh]">
+      <section ref={sectionRef} className="relative h-[200vh]">
         {/* Sticky Content */}
         <div className="top-0 sticky w-full h-screen bg-gradient-to-b from-[#16ABFF] to-[#0D6799] flex items-center">
-          <div className="w-1/2 h-full pl-20 font-space text-white flex flex-col justify-center">
+          <motion.div
+            id="aboutRoundTable"
+            className="w-1/2 h-full pl-20 font-space text-white flex flex-col justify-center"
+            style={{
+              opacity: styles.aboutOpacity,
+              translateX: styles.aboutTranslateX,
+              translateY: styles.aboutTranslateY,
+              rotate: styles.aboutRotate,
+            }}
+          >
             <h1 className="text-7xl font-bold  max-w-md">About RoundTable</h1>
             <p className="text-2xl pt-8 font-light">
               At RoundTable, we know that studying can sometimes feel
@@ -108,7 +129,7 @@ const AboutContainer = () => {
               ask questions, clarify tricky concepts, and guide the
               conversation, making every study session uniquely yours.
             </p>
-          </div>
+          </motion.div>
           <motion.div
             id="phoneScreen"
             style={{
@@ -117,7 +138,6 @@ const AboutContainer = () => {
               height: styles.height,
               borderRadius: styles.borderRadius,
               translateX: styles.translateX,
-              // translateY: styles.translateY,
               borderColor: styles.borderColor,
               paddingTop: styles.paddingTop,
             }}
@@ -132,7 +152,6 @@ const AboutContainer = () => {
                 className="text-hostTextTitle font-bold text-xl"
                 style={{
                   fontSize: styles.titleTextSize,
-                  // lineHeight: styles.titleTextlineHeight,
                 }}
               >
                 Host
@@ -141,7 +160,6 @@ const AboutContainer = () => {
                 className="text-hostTextContent text-3xl font-bold leading-tight t-50% leading-tight"
                 style={{
                   fontSize: styles.contentTextSize,
-                  // // lineHeight: styles.contentTextLineHeight,
                 }}
               >
                 We believe learning should be as dynamic as you are.
@@ -155,7 +173,6 @@ const AboutContainer = () => {
                   className="text-guestTextTitle font-bold text-right text-2xl mt-4"
                   style={{
                     fontSize: styles.titleTextSize,
-                    // // lineHeight: styles.titleTextlineHeight,
                   }}
                 >
                   Guest
@@ -164,7 +181,6 @@ const AboutContainer = () => {
                   className="text-guestTextContent text-4xl text-right font-bold leading-tight"
                   style={{
                     fontSize: styles.contentTextSize,
-                    // // lineHeight: styles.contentTextLineHeight,
                   }}
                 >
                   RoundTable adapts to your goals—offering quick summaries, deep
@@ -202,25 +218,33 @@ const AboutContainer = () => {
               style={{ opacity: styles.buttonContainerOpacity }}
               className="absolute bottom-0 mb-14 w-full h-4 flex justify-evenly items-center"
             >
-              <FaRegPauseCircle
-                color="#333333"
-                size={"1.75rem"}
-                className="hover:opacity-50 transition-opacity cursor-pointer"
-              />
-              <div className="interrupt-button bg-[#333333] w-20 h-20 rounded-full flex flex-col justify-center items-center hover:opacity-50 transition-opacity cursor-pointer">
+              <motion.div whileTap={{ scale: 0.8 }}>
+                <FaRegPauseCircle
+                  color="#333333"
+                  size={"1.75rem"}
+                  className="hover:opacity-50 transition-opacity cursor-pointer"
+                />
+              </motion.div>
+              <motion.div
+                className="interrupt-button bg-[#333333] w-20 h-20 rounded-full flex flex-col justify-center items-center hover:opacity-50 transition-opacity cursor-pointer"
+                whileTap={{ scale: 0.9 }}
+              >
                 <FaMicrophone color="#16ABFF" size={"1.5rem"} />
                 <p className="font-bold text-[0.6rem] pt-1">Interrupt</p>
                 <p className="text-[0.35rem] text-center">hold to record</p>
-              </div>
-              <FaRegStopCircle
-                color="#333333"
-                size={"1.75rem"}
-                className="hover:opacity-50 transition-opacity cursor-pointer"
-              />
+              </motion.div>
+              <motion.div whileTap={{ scale: 0.8 }}>
+                <FaRegStopCircle
+                  color="#333333"
+                  size={"1.75rem"}
+                  className="hover:opacity-50 transition-opacity cursor-pointer"
+                />
+              </motion.div>
             </motion.div>
           </motion.div>
         </div>
       </section>
+      
     </motion.div>
   );
 };
