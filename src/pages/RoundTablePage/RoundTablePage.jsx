@@ -3,6 +3,7 @@ import HeroContainer from "../../containers/HeroContainer";
 import NavBar from "../../components/NavBar";
 import FeaturesContainer from "../../containers/FeaturesContainer";
 import AboutContainer from "../../containers/AboutContainer";
+import PricingContainer from "../../containers/PricingContainer";
 // import FeaturesContainer from '../../containers/FeaturesContainer'
 
 const RoundTablePage = () => {
@@ -12,6 +13,7 @@ const RoundTablePage = () => {
       <HeroContainer />
       <AboutContainer />
       <FeaturesContainer />
+      <PricingContainer />
       {/* Main Content */}
       <div>
         <section className="h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center">
