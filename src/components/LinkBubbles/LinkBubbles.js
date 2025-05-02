@@ -88,7 +88,6 @@ const LinkBubbles = ({ links }) => {
       const canvas = canvasRef.current;
       if (!canvas) return;
 
-      const rect = canvas.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
 
       // Clear canvas with proper scaling
