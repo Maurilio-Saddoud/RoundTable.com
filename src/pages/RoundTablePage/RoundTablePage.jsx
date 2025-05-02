@@ -4,7 +4,7 @@ import NavBar from "../../components/NavBar";
 import FeaturesContainer from "../../containers/FeaturesContainer";
 import AboutContainer from "../../containers/AboutContainer";
 import PricingContainer from "../../containers/PricingContainer";
-// import FeaturesContainer from '../../containers/FeaturesContainer'
+import ContactContainer from "../../containers/ContactContainer";
 
 const RoundTablePage = () => {
   return (
@@ -14,18 +14,7 @@ const RoundTablePage = () => {
       <AboutContainer />
       <FeaturesContainer />
       <PricingContainer />
-      {/* Main Content */}
-      <div>
-        <section className="h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center">
-          <h1 className="text-5xl font-bold">Section 1</h1>
-        </section>
-        <section className="h-screen bg-gradient-to-b from-white to-blue-100 flex items-center justify-center">
-          <h1 className="text-5xl font-bold">Section 2</h1>
-        </section>
-        <section className="h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center">
-          <h1 className="text-5xl font-bold">Section 3</h1>
-        </section>
-      </div>
+      <ContactContainer />
     </>
   );
 };
