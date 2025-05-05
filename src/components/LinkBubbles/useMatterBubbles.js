@@ -65,9 +65,9 @@ const useMatterBubbles = (links, canvasRef, containerRef) => {
       };
 
       const bubble = Matter.Bodies.circle(x, y, size/2, {
-        restitution: 0.7,
-        friction: 0.1,
-        frictionAir: 0.001,
+        restitution: 0.9,
+        friction: 0.05,
+        frictionAir: 0.0005,
         label: link.title,
         url: link.url,
         render: { fillStyle: 'transparent' }
@@ -97,13 +97,13 @@ const useMatterBubbles = (links, canvasRef, containerRef) => {
       while (accumulator >= fixedDeltaTime) {
         // Constrain bubbles to container and add gentle floating
         bodiesRef.current.forEach(bubble => {
-          const maxSpeed = 2; // Very slow for gentle floating
+          const maxSpeed = 4; // Keep natural movement speed the same
           const velocity = bubble.velocity;
           const speed = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
           
           // Add very gentle random drift
           const drift = {
-            x: (Math.random() - 0.5) * 0.0005, // Extremely gentle movement
+            x: (Math.random() - 0.5) * 0.0005,
             y: (Math.random() - 0.5) * 0.0005
           };
           Matter.Body.applyForce(bubble, bubble.position, drift);
@@ -123,10 +123,10 @@ const useMatterBubbles = (links, canvasRef, containerRef) => {
           
           if (x !== bubble.position.x || y !== bubble.position.y) {
             Matter.Body.setPosition(bubble, { x, y });
-            // Very gentle bounce off walls
+            // Increased bounce off walls
             Matter.Body.setVelocity(bubble, {
-              x: bubble.velocity.x * 0.95,
-              y: bubble.velocity.y * 0.95
+              x: bubble.velocity.x * 0.98,
+              y: bubble.velocity.y * 0.98
             });
           }
         });
@@ -187,6 +187,8 @@ const useMatterBubbles = (links, canvasRef, containerRef) => {
             Matter.Body.setPosition(wall, { x: rect.width + 10, y: rect.height / 2 });
             Matter.Body.setVertices(wall, Matter.Bodies.rectangle(rect.width + 10, rect.height / 2, 20, rect.height).vertices);
             break;
+          default:
+            break;
         }
       });
 
@@ -199,17 +201,26 @@ const useMatterBubbles = (links, canvasRef, containerRef) => {
     };
 
     const resizeObserver = new ResizeObserver(handleResize);
-    resizeObserver.observe(containerRef.current);
+    const currentContainer = containerRef.current;
+    resizeObserver.observe(currentContainer);
 
-    return () => resizeObserver.disconnect();
+    return () => {
+      if (currentContainer) {
+        resizeObserver.disconnect();
+      }
+    };
   }, [containerRef]);
 
   // Handle drag interactions
   useEffect(() => {
     if (!canvasRef.current) return;
 
+    const currentCanvas = canvasRef.current;
+    let hasDragged = false;
+
     const handlePointerDown = (e) => {
-      const rect = canvasRef.current.getBoundingClientRect();
+      hasDragged = false;
+      const rect = currentCanvas.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
 
@@ -230,9 +241,16 @@ const useMatterBubbles = (links, canvasRef, containerRef) => {
     const handlePointerMove = (e) => {
       if (!dragRef.current) return;
 
-      const rect = canvasRef.current.getBoundingClientRect();
+      const rect = currentCanvas.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
+
+      // Check if we've moved enough to consider it a drag
+      const dx = x - dragStartPosRef.current.x;
+      const dy = y - dragStartPosRef.current.y;
+      if (Math.sqrt(dx * dx + dy * dy) > 5) {
+        hasDragged = true;
+      }
 
       Matter.Body.setPosition(dragRef.current, { x, y });
       
@@ -240,8 +258,6 @@ const useMatterBubbles = (links, canvasRef, containerRef) => {
       if (dragHistoryRef.current.length > 5) dragHistoryRef.current.shift();
 
       if (dragTimeoutRef.current) {
-        const dx = x - dragStartPosRef.current.x;
-        const dy = y - dragStartPosRef.current.y;
         if (Math.sqrt(dx * dx + dy * dy) > 5) {
           clearTimeout(dragTimeoutRef.current);
           dragTimeoutRef.current = null;
@@ -252,10 +268,12 @@ const useMatterBubbles = (links, canvasRef, containerRef) => {
     const handlePointerUp = () => {
       if (!dragRef.current) return;
 
-      if (dragTimeoutRef.current) {
+      if (dragTimeoutRef.current && !hasDragged) {
+        // Only open link if it was a click (no drag) and the timeout is still active
         clearTimeout(dragTimeoutRef.current);
         window.open(dragRef.current.url, '_blank');
       } else {
+        // Apply velocity if it was a drag
         const history = dragHistoryRef.current;
         if (history.length >= 2) {
           const recent = history[history.length - 1];
@@ -264,7 +282,8 @@ const useMatterBubbles = (links, canvasRef, containerRef) => {
           if (dt > 0) {
             const vx = (recent.x - old.x) / dt;
             const vy = (recent.y - old.y) / dt;
-            Matter.Body.setVelocity(dragRef.current, { x: vx * 100, y: vy * 100 });
+            // Increased throw velocity multiplier
+            Matter.Body.setVelocity(dragRef.current, { x: vx * 200, y: vy * 200 });
           }
         }
       }
@@ -274,14 +293,12 @@ const useMatterBubbles = (links, canvasRef, containerRef) => {
       dragHistoryRef.current = [];
     };
 
-    canvasRef.current.addEventListener('pointerdown', handlePointerDown);
+    currentCanvas.addEventListener('pointerdown', handlePointerDown);
     window.addEventListener('pointermove', handlePointerMove);
     window.addEventListener('pointerup', handlePointerUp);
 
     return () => {
-      if (canvasRef.current) {
-        canvasRef.current.removeEventListener('pointerdown', handlePointerDown);
-      }
+      currentCanvas.removeEventListener('pointerdown', handlePointerDown);
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('pointerup', handlePointerUp);
     };
@@ -291,8 +308,10 @@ const useMatterBubbles = (links, canvasRef, containerRef) => {
   useEffect(() => {
     if (!containerRef.current) return;
 
+    const currentContainer = containerRef.current;
+
     const handleResize = () => {
-      const rect = containerRef.current.getBoundingClientRect();
+      const rect = currentContainer.getBoundingClientRect();
       // Update walls
       const walls = worldRef.current.bodies.filter(body => body.isStatic);
       walls.forEach((wall, index) => {
@@ -313,6 +332,8 @@ const useMatterBubbles = (links, canvasRef, containerRef) => {
             Matter.Body.setPosition(wall, { x: rect.width + 10, y: rect.height / 2 });
             Matter.Body.setVertices(wall, Matter.Bodies.rectangle(rect.width + 10, rect.height / 2, 20, rect.height).vertices);
             break;
+          default:
+            break;
         }
       });
 
@@ -325,48 +346,40 @@ const useMatterBubbles = (links, canvasRef, containerRef) => {
     };
 
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, [containerRef]);
 
   // Handle mouse interaction
   useEffect(() => {
     if (!containerRef.current) return;
 
+    const currentContainer = containerRef.current;
+
     const handleMouseMove = (e) => {
-      if (!containerRef.current) return;
-      const rect = containerRef.current.getBoundingClientRect();
-      // ... rest of mouse move handling code ...
+      if (!currentContainer) return;
+      const rect = currentContainer.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      if (dragRef.current) {
+        Matter.Body.setPosition(dragRef.current, { x, y });
+      }
     };
 
     const handleMouseUp = () => {
-      // ... mouse up handling code ...
-    };
-
-    containerRef.current.addEventListener('mousemove', handleMouseMove);
-    containerRef.current.addEventListener('mouseup', handleMouseUp);
-    return () => {
-      if (containerRef.current) {
-        containerRef.current.removeEventListener('mousemove', handleMouseMove);
-        containerRef.current.removeEventListener('mouseup', handleMouseUp);
+      if (dragRef.current) {
+        Matter.Body.setStatic(dragRef.current, false);
+        dragRef.current = null;
       }
     };
-  }, [containerRef]);
 
-  // Handle click events
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    const handleClick = (e) => {
-      if (!containerRef.current) return;
-      const rect = containerRef.current.getBoundingClientRect();
-      // ... rest of click handling code ...
-    };
-
-    containerRef.current.addEventListener('click', handleClick);
+    currentContainer.addEventListener('mousemove', handleMouseMove);
+    currentContainer.addEventListener('mouseup', handleMouseUp);
     return () => {
-      if (containerRef.current) {
-        containerRef.current.removeEventListener('click', handleClick);
-      }
+      currentContainer.removeEventListener('mousemove', handleMouseMove);
+      currentContainer.removeEventListener('mouseup', handleMouseUp);
     };
   }, [containerRef]);
 
