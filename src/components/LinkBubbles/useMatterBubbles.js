@@ -14,21 +14,45 @@ const useMatterBubbles = (links, canvasRef, containerRef) => {
   const animationFrameRef = useRef(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Initialize Matter.js
+  // Initialize Matter.js engine and world
   useEffect(() => {
-    if (!containerRef.current) return;
-
-    const rect = containerRef.current.getBoundingClientRect();
-    const engine = Matter.Engine.create();
+    console.log('Initializing Matter.js engine');
+    if (!containerRef.current) {
+      console.log('No container ref found');
+      return;
+    }
+    
+    const container = containerRef.current;
+    const rect = container.getBoundingClientRect();
+    console.log('Container size:', rect.width, rect.height);
+    
+    // Clear any existing engine
+    if (engineRef.current) {
+      Matter.Engine.clear(engineRef.current);
+    }
+    
+    const engine = Matter.Engine.create({ 
+      gravity: { x: 0, y: 0 },
+      constraintIterations: 4,
+      timing: {
+        timeScale: 1,
+        timestamp: 0
+      }
+    });
+    
+    const world = engine.world;
     engineRef.current = engine;
+    worldRef.current = world;
 
-    // Create walls
+    // Create walls (invisible boundaries)
     const walls = [
-      Matter.Bodies.rectangle(rect.width/2, -10, rect.width, 20, { isStatic: true }), // top
-      Matter.Bodies.rectangle(rect.width/2, rect.height + 10, rect.width, 20, { isStatic: true }), // bottom
-      Matter.Bodies.rectangle(-10, rect.height/2, 20, rect.height, { isStatic: true }), // left
-      Matter.Bodies.rectangle(rect.width + 10, rect.height/2, 20, rect.height, { isStatic: true }) // right
+      Matter.Bodies.rectangle(rect.width / 2, -10, rect.width, 20, { isStatic: true }), // top
+      Matter.Bodies.rectangle(rect.width / 2, rect.height + 10, rect.width, 20, { isStatic: true }), // bottom
+      Matter.Bodies.rectangle(-10, rect.height / 2, 20, rect.height, { isStatic: true }), // left
+      Matter.Bodies.rectangle(rect.width + 10, rect.height / 2, 20, rect.height, { isStatic: true }), // right
     ];
+
+    Matter.World.add(world, walls);
 
     // Create bubbles
     const bubbles = links.map((link, index) => {
@@ -49,54 +73,22 @@ const useMatterBubbles = (links, canvasRef, containerRef) => {
         render: { fillStyle: 'transparent' }
       });
 
+      Matter.Body.setVelocity(bubble, velocity);
       return bubble;
     });
 
-    // Add all bodies to the world
-    Matter.World.add(engine.world, [...walls, ...bubbles]);
+    Matter.World.add(world, bubbles);
     bodiesRef.current = bubbles;
+    console.log('Created bubbles:', bubbles.length);
 
-    // Start the engine
-    Matter.Runner.run(engine);
-
-    return () => {
-      Matter.Runner.stop(engine);
-      Matter.World.clear(engine.world, false);
-      Matter.Engine.clear(engine);
-    };
-  }, [links, containerRef]);
-
-  // Handle window resize
-  useEffect(() => {
-    if (!containerRef.current || !engineRef.current) return;
-
-    const handleResize = () => {
-      const rect = containerRef.current.getBoundingClientRect();
-      const walls = engineRef.current.world.bodies.filter(body => body.isStatic);
-      
-      // Update wall positions
-      walls[0].position = { x: rect.width/2, y: -10 }; // top
-      walls[1].position = { x: rect.width/2, y: rect.height + 10 }; // bottom
-      walls[2].position = { x: -10, y: rect.height/2 }; // left
-      walls[3].position = { x: rect.width + 10, y: rect.height/2 }; // right
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [containerRef]);
-
-  // Animation loop
-  useEffect(() => {
-    if (!engineRef.current || !containerRef.current) return;
-
-    let lastTime = 0;
+    // Fixed timestep for physics
+    const fixedDeltaTime = 1000 / 60; // 60 FPS
+    let lastTime = performance.now();
     let accumulator = 0;
-    const fixedDeltaTime = 1000/60; // 60 FPS
 
     const animate = (currentTime) => {
-      if (!engineRef.current || !containerRef.current) return;
+      if (!engineRef.current) return;
       
-      const rect = containerRef.current.getBoundingClientRect();
       const deltaTime = Math.min(currentTime - lastTime, 1000/30); // Cap at 30fps worth of time
       lastTime = currentTime;
       accumulator += deltaTime;
@@ -147,13 +139,25 @@ const useMatterBubbles = (links, canvasRef, containerRef) => {
     };
 
     animationFrameRef.current = requestAnimationFrame(animate);
+    setIsInitialized(true);
 
+    // Cleanup
     return () => {
+      console.log('Cleaning up Matter.js engine');
+      setIsInitialized(false);
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
       }
+      if (engineRef.current) {
+        Matter.Engine.clear(engineRef.current);
+        Matter.World.clear(worldRef.current, false);
+        engineRef.current = null;
+        worldRef.current = null;
+      }
+      bodiesRef.current = [];
     };
-  }, [containerRef]);
+  }, [containerRef, links]);
 
   // Handle container resize
   useEffect(() => {
@@ -198,7 +202,7 @@ const useMatterBubbles = (links, canvasRef, containerRef) => {
     resizeObserver.observe(containerRef.current);
 
     return () => resizeObserver.disconnect();
-  }, []);
+  }, [containerRef]);
 
   // Handle drag interactions
   useEffect(() => {
@@ -280,6 +284,106 @@ const useMatterBubbles = (links, canvasRef, containerRef) => {
       }
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('pointerup', handlePointerUp);
+    };
+  }, [canvasRef]);
+
+  // Handle window resize
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const handleResize = () => {
+      const rect = containerRef.current.getBoundingClientRect();
+      // Update walls
+      const walls = worldRef.current.bodies.filter(body => body.isStatic);
+      walls.forEach((wall, index) => {
+        switch(index) {
+          case 0: // top
+            Matter.Body.setPosition(wall, { x: rect.width / 2, y: -10 });
+            Matter.Body.setVertices(wall, Matter.Bodies.rectangle(rect.width / 2, -10, rect.width, 20).vertices);
+            break;
+          case 1: // bottom
+            Matter.Body.setPosition(wall, { x: rect.width / 2, y: rect.height + 10 });
+            Matter.Body.setVertices(wall, Matter.Bodies.rectangle(rect.width / 2, rect.height + 10, rect.width, 20).vertices);
+            break;
+          case 2: // left
+            Matter.Body.setPosition(wall, { x: -10, y: rect.height / 2 });
+            Matter.Body.setVertices(wall, Matter.Bodies.rectangle(-10, rect.height / 2, 20, rect.height).vertices);
+            break;
+          case 3: // right
+            Matter.Body.setPosition(wall, { x: rect.width + 10, y: rect.height / 2 });
+            Matter.Body.setVertices(wall, Matter.Bodies.rectangle(rect.width + 10, rect.height / 2, 20, rect.height).vertices);
+            break;
+        }
+      });
+
+      // Keep bubbles within bounds
+      bodiesRef.current.forEach(bubble => {
+        const x = Math.min(Math.max(bubble.position.x, bubble.circleRadius), rect.width - bubble.circleRadius);
+        const y = Math.min(Math.max(bubble.position.y, bubble.circleRadius), rect.height - bubble.circleRadius);
+        Matter.Body.setPosition(bubble, { x, y });
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [containerRef]);
+
+  // Handle mouse interaction
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const handleMouseMove = (e) => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      // ... rest of mouse move handling code ...
+    };
+
+    const handleMouseUp = () => {
+      // ... mouse up handling code ...
+    };
+
+    containerRef.current.addEventListener('mousemove', handleMouseMove);
+    containerRef.current.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      if (containerRef.current) {
+        containerRef.current.removeEventListener('mousemove', handleMouseMove);
+        containerRef.current.removeEventListener('mouseup', handleMouseUp);
+      }
+    };
+  }, [containerRef]);
+
+  // Handle click events
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const handleClick = (e) => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      // ... rest of click handling code ...
+    };
+
+    containerRef.current.addEventListener('click', handleClick);
+    return () => {
+      if (containerRef.current) {
+        containerRef.current.removeEventListener('click', handleClick);
+      }
+    };
+  }, [containerRef]);
+
+  // Handle cleanup
+  useEffect(() => {
+    return () => {
+      if (engineRef.current) {
+        Matter.Engine.clear(engineRef.current);
+        engineRef.current = null;
+      }
+      if (worldRef.current) {
+        Matter.World.clear(worldRef.current, false);
+        worldRef.current = null;
+      }
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
     };
   }, []);
 
